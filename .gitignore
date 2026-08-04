@@ -1,0 +1,52 @@
+# Build outputs & binaries
+[Bb]in/
+[Oo]bj/
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Credentials & Local Secret Overrides
+appsettings.Local.json
+appsettings.Development.json
+appsettings.secrets.json
+*.secrets.json
+*.env
+*.key
+*.pem
+
+# SQLite Databases & Local Storage
+*.db
+*.db-shm
+*.db-wal
+uploads/
+output/
+temp/
+
+# Temporary / Scratch Test Files & Diagnostic Projects
+test_*.json
+test_*.cs
+test.*
+req.cs
+mcp_req*.json
+diag_*
+*.txt
+*.log
+src/TestA2A/
+src/TestFastMCP/
+
+# Documentation (Excluded for later review)
+docs/
+
+# IDE / Editor Files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# OS Generated Files
+[Tt]humbs.db
+[Dd]esktop.ini
