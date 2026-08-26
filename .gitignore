@@ -37,8 +37,6 @@ diag_*
 src/TestA2A/
 src/TestFastMCP/
 
-# Documentation (Excluded for later review)
-docs/
 
 # IDE / Editor Files
 .vs/
