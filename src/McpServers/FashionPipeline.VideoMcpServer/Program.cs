@@ -5,7 +5,6 @@ using FashionPipeline.VideoMcpServer;
 
 var mcpServer = new FastMCPServer(name: "FashionPipeline.VideoMcpServer");
 var builder = McpServerBuilder.Create(mcpServer, args);
-builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 builder.WithComponentsFrom(Assembly.GetExecutingAssembly());
 
 builder.Services.AddOptions<KlingOptions>().BindConfiguration("Kling");

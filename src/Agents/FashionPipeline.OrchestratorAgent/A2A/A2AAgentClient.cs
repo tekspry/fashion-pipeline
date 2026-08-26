@@ -27,6 +27,9 @@ public sealed class A2AAgentClient
     public Task<string> SendToVideoAsync(string payloadJson, CancellationToken cancellationToken) =>
         SendTextAsync(_agentOptions.VideoUrl, payloadJson, cancellationToken);
 
+    public Task<string> SendToInpaintingAsync(string payloadJson, CancellationToken cancellationToken) =>
+        SendTextAsync(_agentOptions.InpaintingUrl, payloadJson, cancellationToken);
+
     public async Task<string> SendTextAsync(string agentBaseUrl, string text, CancellationToken cancellationToken)
     {
         var http = _httpClientFactory.CreateClient("A2AAgents");

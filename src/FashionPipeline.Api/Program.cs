@@ -100,8 +100,10 @@ app.MapPost("/api/v1/accessory/process", async (
     db.Accessories.Add(accessory);
     await db.SaveChangesAsync(cancellationToken);
 
-    var jobId = jobClient.Enqueue<PipelineAgentJob>(job =>
-        job.ExecuteAsync(accessory.Id, tenantId, CancellationToken.None));
+    // Disabled auto-enqueue to prevent duplicate parallel pipeline runs.
+    // var jobId = jobClient.Enqueue<PipelineAgentJob>(job =>
+    //     job.ExecuteAsync(accessory.Id, tenantId, CancellationToken.None));
+    string? jobId = null;
 
     return Results.Accepted($"/api/v1/accessory/{accessory.Id}", new { jobId, accessoryId = accessory.Id });
 })
@@ -155,8 +157,11 @@ app.MapPost("/api/v1/accessory/upload", async (
     db.Accessories.Add(accessory);
     await db.SaveChangesAsync(ct);
 
-    var jobId = jobClient.Enqueue<PipelineAgentJob>(job =>
-        job.ExecuteAsync(accessory.Id, tenantId, CancellationToken.None));
+    // Disabled auto-enqueue to prevent duplicate parallel pipeline runs and extra model costs.
+    // The pipeline will be triggered explicitly on demand.
+    // var jobId = jobClient.Enqueue<PipelineAgentJob>(job =>
+    //     job.ExecuteAsync(accessory.Id, tenantId, CancellationToken.None));
+    string? jobId = null;
 
     return Results.Accepted($"/api/v1/accessory/{accessory.Id}", new { jobId, accessoryId = accessory.Id, localUrl });
 })
@@ -195,6 +200,23 @@ app.MapPatch("/api/v1/assets/{assetId:guid}/approval", async (
     await db.SaveChangesAsync(ct);
     return Results.Ok(asset);
 });
+
+app.MapPost("/api/v1/accessory/{id:guid}/run", async (
+    Guid id,
+    [FromHeader(Name = "X-Tenant-Id")] Guid tenantId,
+    AppDbContext db,
+    IBackgroundJobClient jobClient,
+    CancellationToken ct) =>
+{
+    db.CurrentTenantId = tenantId;
+    var accessory = await db.Accessories.FindAsync(new object[] { id }, ct);
+    if (accessory is null) return Results.NotFound();
+    var jobId = jobClient.Enqueue<PipelineAgentJob>(job =>
+        job.ExecuteAsync(accessory.Id, tenantId, CancellationToken.None));
+    return Results.Accepted($"/api/v1/accessory/{id}", new { jobId, accessoryId = id });
+})
+.WithName("RunAccessoryPipeline")
+.WithOpenApi();
 
 app.MapGet("/api/v1/accessory/manual-video", async (AppDbContext db, ITenantContext tenantContext, CancellationToken ct) =>
 {

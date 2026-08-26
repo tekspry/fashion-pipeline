@@ -21,6 +21,8 @@ appsettings.secrets.json
 *.db-wal
 uploads/
 output/
+model-output/
+src/McpServers/input/
 temp/
 
 # Temporary / Scratch Test Files & Diagnostic Projects

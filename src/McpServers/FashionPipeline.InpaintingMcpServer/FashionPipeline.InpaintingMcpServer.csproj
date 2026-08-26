@@ -9,11 +9,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>d724024f-2a64-46f8-99c7-58e6d9162181</UserSecretsId>
+    <UserSecretsId>fa8b2c1d-9e3a-47f1-b6c5-2e8d0a4f5c91</UserSecretsId>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="Templates\**" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
 
 </Project>

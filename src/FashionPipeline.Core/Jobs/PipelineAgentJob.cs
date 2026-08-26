@@ -15,6 +15,7 @@ public class AgentOptions
     public string CreativeUrl { get; set; } = "http://localhost:5201";
     public string ImageUrl { get; set; } = "http://localhost:5301";
     public string VideoUrl { get; set; } = "http://localhost:5401";
+    public string InpaintingUrl { get; set; } = "http://localhost:5501";
 }
 
 public class PipelineAgentJob

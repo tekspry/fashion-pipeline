@@ -5,10 +5,10 @@ using FashionPipeline.PromptMcpServer;
 
 var mcpServer = new FastMCPServer(name: "FashionPipeline.PromptMcpServer");
 var builder = McpServerBuilder.Create(mcpServer, args);
-builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
 builder.WithComponentsFrom(Assembly.GetExecutingAssembly());
 
 builder.Services.AddOptions<GeminiOptions>().BindConfiguration("Gemini");
+builder.Services.AddOptions<FashionPipeline.Core.Options.AiProviderOptions>().BindConfiguration("AIProvider");
 builder.Services.AddHttpClient<PromptGenerationTool>(client =>
 {
     client.Timeout = TimeSpan.FromMinutes(5);
