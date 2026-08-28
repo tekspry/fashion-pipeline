@@ -36,9 +36,9 @@ diag_*
 *.log
 src/TestA2A/
 src/TestFastMCP/
+# Documentation & Internal Working Docs
+docs/
 
-
-# IDE / Editor Files
 .vs/
 .vscode/
 .idea/
