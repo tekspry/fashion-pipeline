@@ -1,12 +1,12 @@
 # 👗 Fashion Accessory AI Marketing Pipeline
 
-[![.NET 8.0](https://img.shields.io/badge/.NET-8.0-blue.svg)](https://dotnet.microsoft.com/)
-[![C# 12](https://img.shields.io/badge/C%23-12-purple.svg)](https://learn.microsoft.com/en-us/dotnet/csharp/)
-[![DotnetFastMCP](https://img.shields.io/badge/MCP-DotnetFastMCP-orange.svg)](https://github.com/tekspry/DotnetFastMCP)
+[![.NET 10.0](https://img.shields.io/badge/.NET-10.0%20LTS-blue.svg)](https://dotnet.microsoft.com/)
+[![C# 13](https://img.shields.io/badge/C%23-13-purple.svg)](https://learn.microsoft.com/en-us/dotnet/csharp/)
+[![DotnetFastMCP](https://img.shields.io/badge/MCP-DotnetFastMCP%20v2.0-orange.svg)](https://github.com/tekspry/DotnetFastMCP)
 [![Google A2A](https://img.shields.io/badge/Protocol-Google%20A2A-green.svg)](https://a2a-protocol.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-An enterprise-grade, distributed multimodal AI pipeline built in **.NET 8** that automates the transformation of raw physical fashion accessory photographs (buttons, zari laces, trims, latkans, and brooches) into commercial 2-section marketing visuals and video content.
+An enterprise-grade, distributed multimodal AI pipeline built in **.NET 10 LTS** that automates the transformation of raw physical fashion accessory photographs (buttons, zari laces, trims, latkans, and brooches) into commercial 2-section marketing visuals and video content.
 
 The system pioneers a **Two-Dimensional AI Architecture**:
 - 🌐 **Horizontal Layer (Google A2A Protocol):** Autonomous micro-agents communicating via JSON-RPC 2.0 (`task/send`) with discoverable AgentCards.
@@ -73,7 +73,7 @@ The system pioneers a **Two-Dimensional AI Architecture**:
 ## 🚀 Quick Start
 
 ### 1. Prerequisites
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [PowerShell 7+](https://github.com/PowerShell/PowerShell)
 - A [Google AI Studio API Key](https://aistudio.google.com/)
 
