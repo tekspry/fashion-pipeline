@@ -367,48 +367,9 @@ public class ImageGenerationTool
     }
 
     /// <summary>
-    /// Fetches image from various sources: local file://, uploads directory, or HTTP URL.
-    /// Returns the image as (base64, mimeType) for use in Gemini inline_data.
+    /// Fetches image from various sources (local file://, uploads directory, HTTP/HTTPS, or data URI)
+    /// using FastMCP's built-in McpMediaLoader.
     /// </summary>
-    private async Task<(string base64, string mimeType)> FetchImageDataAsync(string imageUrl)
-    {
-        if (imageUrl.StartsWith("file://") || File.Exists(imageUrl))
-        {
-            var localPath = imageUrl.Replace("file:///", "").Replace("file://", "");
-            if (File.Exists(localPath))
-            {
-                var fileBytes = await File.ReadAllBytesAsync(localPath);
-                var mime = localPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? "image/png"
-                         : localPath.EndsWith(".webp", StringComparison.OrdinalIgnoreCase) ? "image/webp"
-                         : "image/jpeg";
-                return (Convert.ToBase64String(fileBytes), mime);
-            }
-        }
-
-        if (imageUrl.Contains("/uploads/"))
-        {
-            var fileName = imageUrl.Substring(imageUrl.LastIndexOf("/uploads/") + 9);
-            var localUploadPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "FashionPipeline.Api", "wwwroot", "uploads", fileName);
-            if (File.Exists(localUploadPath))
-            {
-                var fileBytes = await File.ReadAllBytesAsync(localUploadPath);
-                var mime = fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? "image/png"
-                         : fileName.EndsWith(".webp", StringComparison.OrdinalIgnoreCase) ? "image/webp"
-                         : "image/jpeg";
-                return (Convert.ToBase64String(fileBytes), mime);
-            }
-        }
-
-        using var request = new HttpRequestMessage(HttpMethod.Get, imageUrl);
-        var response = await _httpClient.SendAsync(request);
-        if (!response.IsSuccessStatusCode)
-        {
-            var err = await response.Content.ReadAsStringAsync();
-            throw new InvalidOperationException($"Failed to download image from {imageUrl} (Status {response.StatusCode}): {err}");
-        }
-
-        var bytes = await response.Content.ReadAsByteArrayAsync();
-        var contentType = response.Content.Headers.ContentType?.MediaType ?? "image/jpeg";
-        return (Convert.ToBase64String(bytes), contentType);
-    }
+    private Task<(string base64, string mimeType)> FetchImageDataAsync(string imageUrl)
+        => McpMediaLoader.LoadAsBase64Async(imageUrl, _httpClient);
 }

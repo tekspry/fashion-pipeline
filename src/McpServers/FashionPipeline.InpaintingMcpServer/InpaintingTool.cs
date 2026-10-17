@@ -418,50 +418,10 @@ public class InpaintingTool
         return $"file:///{filePath.Replace('\\', '/')}";
     }
 
-    private async Task<(string base64, string mimeType)> FetchImageDataAsync(string imageUrl)
-    {
-        if (imageUrl.StartsWith("file://"))
-        {
-            var localPath = imageUrl.Replace("file:///", "").Replace("file://", "");
-            if (File.Exists(localPath))
-            {
-                var fileBytes = await File.ReadAllBytesAsync(localPath);
-                return (Convert.ToBase64String(fileBytes), GetMime(localPath));
-            }
-        }
-
-        if (File.Exists(imageUrl))
-        {
-            var fileBytes = await File.ReadAllBytesAsync(imageUrl);
-            return (Convert.ToBase64String(fileBytes), GetMime(imageUrl));
-        }
-
-        if (imageUrl.Contains("/uploads/"))
-        {
-            var fileName = imageUrl.Substring(imageUrl.LastIndexOf("/uploads/") + 9);
-            var localUploadPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "FashionPipeline.Api", "wwwroot", "uploads", fileName);
-            if (File.Exists(localUploadPath))
-            {
-                var fileBytes = await File.ReadAllBytesAsync(localUploadPath);
-                return (Convert.ToBase64String(fileBytes), GetMime(fileName));
-            }
-        }
-
-        using var request = new HttpRequestMessage(HttpMethod.Get, imageUrl);
-        var response = await _httpClient.SendAsync(request);
-        if (!response.IsSuccessStatusCode)
-            throw new InvalidOperationException($"Failed to download image: {imageUrl}");
-
-        var bytes = await response.Content.ReadAsByteArrayAsync();
-        var contentType = response.Content.Headers.ContentType?.MediaType ?? "image/jpeg";
-        return (Convert.ToBase64String(bytes), contentType);
-    }
-
-    private static string GetMime(string path) =>
-        Path.GetExtension(path).ToLowerInvariant() switch
-        {
-            ".png" => "image/png",
-            ".webp" => "image/webp",
-            _ => "image/jpeg"
-        };
+    /// <summary>
+    /// Fetches image from various sources (local file://, uploads directory, HTTP/HTTPS, or data URI)
+    /// using FastMCP's built-in McpMediaLoader.
+    /// </summary>
+    private Task<(string base64, string mimeType)> FetchImageDataAsync(string imageUrl)
+        => McpMediaLoader.LoadAsBase64Async(imageUrl, _httpClient);
 }

@@ -277,50 +277,13 @@ public class PromptGenerationTool
         return new List<string> { cleaned };
     }
 
-    private async Task<(string base64, string mimeType)> FetchImageDataAsync(string imageUrl)
-    {
-        // 1. Check if it's a local file path
-        if (imageUrl.StartsWith("file://") || File.Exists(imageUrl))
-        {
-            var localPath = imageUrl.Replace("file:///", "").Replace("file://", "");
-            if (File.Exists(localPath))
-            {
-                var fileBytes = await File.ReadAllBytesAsync(localPath);
-                var mime = localPath.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? "image/png"
-                         : localPath.EndsWith(".webp", StringComparison.OrdinalIgnoreCase) ? "image/webp"
-                         : "image/jpeg";
-                return (Convert.ToBase64String(fileBytes), mime);
-            }
-        }
+    /// <summary>
+    /// Fetches image from various sources (local file://, uploads directory, HTTP/HTTPS, or data URI)
+    /// using FastMCP's built-in McpMediaLoader.
+    /// </summary>
+    private Task<(string base64, string mimeType)> FetchImageDataAsync(string imageUrl)
+        => McpMediaLoader.LoadAsBase64Async(imageUrl, _httpClient);
 
-        // 2. Check if local uploads folder has the file directly (bypass HTTP loopback)
-        if (imageUrl.Contains("/uploads/"))
-        {
-            var fileName = imageUrl.Substring(imageUrl.LastIndexOf("/uploads/") + 9);
-            var localUploadPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "FashionPipeline.Api", "wwwroot", "uploads", fileName);
-            if (File.Exists(localUploadPath))
-            {
-                var fileBytes = await File.ReadAllBytesAsync(localUploadPath);
-                var mime = fileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ? "image/png"
-                         : fileName.EndsWith(".webp", StringComparison.OrdinalIgnoreCase) ? "image/webp"
-                         : "image/jpeg";
-                return (Convert.ToBase64String(fileBytes), mime);
-            }
-        }
-
-        // 3. Otherwise fetch via HTTP with status validation
-        using var request = new HttpRequestMessage(HttpMethod.Get, imageUrl);
-        var response = await _httpClient.SendAsync(request);
-        if (!response.IsSuccessStatusCode)
-        {
-            var err = await response.Content.ReadAsStringAsync();
-            throw new InvalidOperationException($"Failed to download image from {imageUrl} (Status {response.StatusCode}): {err}");
-        }
-
-        var bytes = await response.Content.ReadAsByteArrayAsync();
-        var contentType = response.Content.Headers.ContentType?.MediaType ?? "image/jpeg";
-        return (Convert.ToBase64String(bytes), contentType);
-    }
 
     private static string FormatFeatureContext(string featureJson)
     {
